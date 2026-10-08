@@ -1,0 +1,40 @@
+name: Automatisation des tests DevSecOps
+
+on:
+  push:
+
+jobs:
+  Dependances:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Recuperation du repository
+        uses: actions/checkout@v4
+
+      - name: Controle des dependances avec Trivy
+        run: |
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE":/project \
+            aquasec/trivy:latest fs \
+            --scanners vuln \
+            --exit-code 1 \
+            --severity HIGH,CRITICAL \
+            /project/requirements.txt
+
+  Dockerfile:
+    runs-on: ubuntu-latest
+    needs: Dependances
+
+    steps:
+      - name: Test Dockerfile
+        run: |
+          echo "ecrire ici le script de contrôle du Dockerfile"
+
+  Deploy:
+    runs-on: ubuntu-latest
+    needs: Dockerfile
+
+    steps:
+      - name: Deploy
+        run: |
+          echo "Rien à faire ici. Votre application est prête à être déployée"

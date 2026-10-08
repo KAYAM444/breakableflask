@@ -26,9 +26,17 @@ jobs:
     needs: Dependances
 
     steps:
-      - name: Test Dockerfile
+      - name: Recuperation du repository
+        uses: actions/checkout@v4
+
+      - name: Controle du Dockerfile avec Trivy
         run: |
-          echo "ecrire ici le script de contrôle du Dockerfile"
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE":/project \
+            aquasec/trivy:latest config \
+            --severity HIGH,CRITICAL \
+            --exit-code 1 \
+            /project/Dockerfile
 
   Deploy:
     runs-on: ubuntu-latest

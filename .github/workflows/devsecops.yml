@@ -11,21 +11,22 @@ jobs:
       - name: Recuperation du repository
         uses: actions/checkout@v4
 
-      - name: Verifier la presence de requirements.txt
+      - name: Verification des fichiers dans le conteneur
         run: |
-          pwd
-          ls -la
-          test -f requirements.txt
+          docker run --rm \
+            -v "$PWD:/project:ro" \
+            alpine:3.22 \
+            ls -l /project/requirements.txt
 
       - name: Controle des dependances avec Trivy
         run: |
           docker run --rm \
-            -v "${{ github.workspace }}/requirements.txt:/project/requirements.txt:ro" \
+            -v "$PWD:/project:ro" \
             aquasec/trivy:latest fs \
             --scanners vuln \
             --exit-code 1 \
             --severity HIGH,CRITICAL \
-            /project/requirements.txt
+            /project
 
 
   Dockerfile:

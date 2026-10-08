@@ -24,6 +24,7 @@ jobs:
             -v "$PWD:/project:ro" \
             aquasec/trivy:latest fs \
             --scanners vuln \
+            --detection-priority comprehensive \
             --exit-code 1 \
             --severity HIGH,CRITICAL \
             /project
